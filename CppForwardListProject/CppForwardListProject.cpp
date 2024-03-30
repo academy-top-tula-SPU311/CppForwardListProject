@@ -1,18 +1,28 @@
 ﻿#include <iostream>
 
+template <typename T>
 struct Node
 {
-    int value;
-    Node* next{ nullptr };
+    T value;
+    Node<T>* next{ nullptr };
 };
 
-void ForwardListPushHead(Node*& head, int value);
-void ForwardListPushTail(Node*& head, int value);
-void ForwardListPrint(Node* head);
+template <typename T>
+void ForwardListPushHead(Node<T>*& head, T value);
+template <typename T>
+void ForwardListPushTail(Node<T>*& head, T value);
+
+template <typename T>
+T ForwardListPopHead(Node<T>*& head);
+template <typename T>
+T ForwardListPopTail(Node<T>*& head);
+
+template <typename T>
+void ForwardListPrint(Node<T>* head);
 
 int main()
 {
-    Node* head{ nullptr };
+    Node<int>* head{ nullptr };
 
     ForwardListPushHead(head, 100);
     ForwardListPushHead(head, 200);
@@ -21,33 +31,76 @@ int main()
     ForwardListPrint(head);
     std::cout << "\n";
 
-    ForwardListPushTail(head, 400);
-    ForwardListPushTail(head, 500);
+    std::cout << ForwardListPopTail(head) << "\n";
+    std::cout << ForwardListPopTail(head) << "\n";
+    std::cout << ForwardListPopTail(head) << "\n";
+
+    /*ForwardListPushTail(head, 400);
+    ForwardListPushTail(head, 500);*/
 
     ForwardListPrint(head);
 }
 
-void ForwardListPushHead(Node*& head, int value)
+template <typename T>
+void ForwardListPushHead(Node<T>*& head, T value)
 {
-    Node* nodeNew = new Node;
+    Node<T>* nodeNew = new Node<T>;
     nodeNew->value = value;
     nodeNew->next = head;
 
     head = nodeNew;
 }
 
-void ForwardListPushTail(Node*& head, int value)
+template <typename T>
+void ForwardListPushTail(Node<T>*& head, T value)
 {
-    Node* nodeLast = head;
+    Node<T>* nodeLast = head;
     while (nodeLast->next)
         nodeLast = nodeLast->next;
 
-    Node* nodeNew = new Node;
+    Node<T>* nodeNew = new Node<T>;
     nodeNew->value = value;
     nodeLast->next = nodeNew;
 }
 
-void ForwardListPrint(Node* head)
+template<typename T>
+T ForwardListPopHead(Node<T>*& head)
+{
+    T value = head->value;
+
+    Node<T>* nodeDelete = head;
+    head = head->next;
+    delete nodeDelete;
+
+    return value;
+}
+
+template<typename T>
+T ForwardListPopTail(Node<T>*& head)
+{
+    Node<T>* nodeCurrent{ head };
+    while (nodeCurrent->next && nodeCurrent->next->next)
+        nodeCurrent = nodeCurrent->next;
+
+    T value;
+
+    if (!nodeCurrent->next)
+    {
+        value = nodeCurrent->value;
+        delete nodeCurrent;
+        head = nullptr;
+    }
+    else
+    {
+        value = nodeCurrent->next->value;
+        delete nodeCurrent->next;
+        nodeCurrent->next = nullptr;
+    }
+    return value;
+}
+
+template <typename T>
+void ForwardListPrint(Node<T>* head)
 {
     while (head)
     {
